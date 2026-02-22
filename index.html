@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pingd.media — Community Architected</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Instrument+Sans:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #262624;
+            --bg-surface: #30302E;
+            --accent: #C5613F;
+            --text-bright: #EEECEA;
+            --text-main: #D6D4CC;
+            /* Contrast improvement for readability (old: #A19F94) */
+            --text-muted: #B5B3AD; 
+            --border: rgba(194, 192, 180, 0.15);
+            --section-spacing: clamp(3.5rem, 8vw, 8rem);
+        }
+
+        /* Prevent Safari Overflow Jiggle */
+        html, body {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        ::-webkit-scrollbar { display: none; }
+
+        .site-wrapper {
+            width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Instrument Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Fraunces', serif;
+            letter-spacing: -0.02em;
+            color: var(--text-bright);
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .h-hero { font-size: clamp(2.5rem, 7.5vw, 6.5rem); }
+        .h-section { font-size: clamp(2rem, 5vw, 4rem); }
+
+        .grid-background {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, var(--border) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+            background-size: 100px 100px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+        }
+
+        .glow {
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(197, 97, 63, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* PERFORMANCE OPTIMIZATION: 
+           Replaced .gif grain with CSS noise animation. 
+           Significantly lighter on CPU/Battery.
+        */
+        .grain-overlay {
+            position: fixed;
+            inset: -150%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            z-index: 9999;
+            animation: grain-motion 8s steps(10) infinite;
+        }
+        @keyframes grain-motion {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            20% { transform: translate(-10%, 5%); }
+            30% { transform: translate(5%, -10%); }
+            40% { transform: translate(-5%, 15%); }
+            50% { transform: translate(-10%, 5%); }
+            60% { transform: translate(15%, 0); }
+            70% { transform: translate(0, 10%); }
+            80% { transform: translate(-15%, 0); }
+            90% { transform: translate(10%, 5%); }
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .ticker-wrap {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 45s linear infinite;
+        }
+
+        @media (max-width: 768px) {
+            .ticker-wrap { animation-duration: 25s; }
+            .menu-link { font-size: clamp(1.8rem, 10vw, 2.5rem); }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 0.85em;
+            background-color: var(--accent);
+            margin-left: 4px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .card {
+            background-color: var(--bg-surface);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(4px);
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(197, 97, 63, 0.4);
+            box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .nav-blur {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(38, 38, 36, 0.85);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .coord {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        .ghost-text {
+            position: absolute;
+            font-family: 'Fraunces', serif;
+            font-size: clamp(8rem, 15vw, 20rem);
+            font-weight: 700;
+            color: white;
+            opacity: 0.015;
+            pointer-events: none;
+            z-index: 0;
+            line-height: 1;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .email-frame {
+            position: relative;
+            padding: 1.5rem 3.5rem;
+            display: inline-block;
+        }
+        .email-frame::before, .email-frame::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--accent);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .email-frame::before { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+        .email-frame::after { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+        .email-frame:hover::before, .email-frame:hover::after {
+            width: 100%;
+            height: 100%;
+        }
+
+        .section-divider {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .section-divider::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Fillout Button Styling Override */
+        [data-fillout-id] button {
+            font-family: 'JetBrains Mono', monospace !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.15em !important;
+            font-weight: 700 !important;
+            border-radius: 0 !important;
+            padding: 1rem 1.75rem !important;
+            transition: all 0.3s ease !important;
+        }
+        [data-fillout-id] button:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        .scroll-motif {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.4;
+        }
+        .mouse-icon {
+            width: 18px;
+            height: 28px;
+            border: 1.5px solid var(--text-muted);
+            border-radius: 10px;
+            position: relative;
+        }
+        .mouse-icon::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 5px;
+            background: var(--accent);
+            border-radius: 1px;
+            animation: scroll-anim 2.5s infinite;
+        }
+        @keyframes scroll-anim {
+            0% { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, 10px); opacity: 0; }
+        }
+
+        #mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        #mobile-menu.open { transform: translateX(0); }
+    </style>
+</head>
+<body class="selection:bg-[#C5613F] selection:text-white">
+    <div class="site-wrapper">
+        <div class="grain-overlay"></div>
+        <div class="grid-background"></div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="fixed inset-0 bg-[#262624] z-[200] flex flex-col items-center justify-center p-8">
+            <button id="closeMenu" class="absolute top-8 right-8 text-muted hover:text-white transition-colors p-2" aria-label="Close Mobile Menu">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="flex flex-col items-center space-y-12 text-center">
+                <a href="#reports" class="menu-link font-display font-bold">Reports</a>
+                <a href="#services" class="menu-link font-display font-bold">Services</a>
+                <a href="#tiers" class="menu-link font-display font-bold">Pricing</a>
+                <a href="#contact" class="menu-link font-display font-bold bg-[#C5613F] text-white px-8 py-2">Secure Slot</a>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav id="navbar" class="fixed w-full z-[100] px-6 py-5 flex justify-between items-center transition-all duration-500">
+            <!-- Brand Mark Refinement: Bolder presence -->
+            <div class="text-2xl font-black tracking-tighter font-display text-bright">
+                pingd<span class="text-[#C5613F]">.</span>media
+            </div>
+            <div class="hidden md:flex items-center space-x-10 text-xs uppercase tracking-[0.2em] font-bold">
+                <a href="#reports" class="hover:text-[#C5613F] transition-colors">Reports</a>
+                <a href="#services" class="hover:text-[#C5613F] transition-colors">Services</a>
+                <a href="#tiers" class="hover:text-[#C5613F] transition-colors">Pricing</a>
+                <a href="#contact" class="px-6 py-2.5 border border-[#C5613F] text-[#C5613F] hover:bg-[#C5613F] hover:text-white transition-all">Secure Slot</a>
+            </div>
+            <button class="md:hidden text-muted hover:text-white transition-colors p-2" id="mobileMenuBtn" aria-label="Open Mobile Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8h16M10 16h10"/></svg>
+            </button>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="relative min-h-[90vh] flex flex-col justify-center px-6 md:px-24 overflow-hidden pt-16">
+            <div class="glow top-20 left-[-10%]"></div>
+            <div class="ghost-text top-10 right-[-2%]">ops</div>
+            
+            <div class="coord top-32 left-8">LAT: 32.1132° N</div>
+            <div class="coord top-32 right-8">LONG: 21.8932° W</div>
+            
+            <div class="max-w-6xl z-10">
+                <div class="reveal inline-flex items-center gap-3 mb-8 bg-[#C5613F]/10 border border-[#C5613F]/30 px-4 py-2">
+                    <span class="w-2 h-2 bg-[#C5613F] rounded-full animate-pulse"></span>
+                    <span class="text-xs font-mono tracking-[0.1em] text-[#C5613F] font-bold uppercase">Human-Led Operations // No AI Wrappers</span>
+                </div>
+                
+                <h1 class="h-hero font-bold leading-[0.98] mb-10 reveal" style="transition-delay: 200ms;">
+                    Your community is <br>
+                    <span id="typewriter" class="text-[#C5613F]"></span><span class="cursor"></span>
+                </h1>
+                
+                <div class="max-w-2xl reveal" style="transition-delay: 400ms;">
+                    <p class="text-lg md:text-xl text-[#B5B3AD] leading-relaxed font-light mb-10">
+                        We architect bespoke Discord ecosystems for high-stakes studios. No bots doing a human's job—just professional infrastructure and managed operations.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-5 mb-12">
+                        <a href="#contact" class="group w-full sm:w-auto flex items-center justify-center gap-3 bg-[#C5613F] text-white px-8 py-4 font-bold text-xs font-mono tracking-[0.15em] uppercase transition-all hover:brightness-110">
+                            Secure Slot
+                        </a>
+                        <a href="#services" class="group w-full sm:w-auto flex items-center justify-center gap-3 border border-white/20 text-white px-8 py-4 font-bold text-xs tracking-[0.15em] uppercase transition-all hover:bg-white/5">
+                            View Blueprint
+                        </a>
+                    </div>
+
+                    <div class="text-xs font-mono tracking-[0.2em] opacity-60 uppercase font-bold text-[#C5613F]">
+                        Currently accepting 1 partner for Q2 2026
+                    </div>
+                </div>
+            </div>
+
+            <div class="scroll-motif reveal">
+                <div class="mouse-icon"></div>
+                <span class="font-mono text-xs tracking-[0.3em] uppercase">Scroll</span>
+            </div>
+        </section>
+
+        <!-- Ticker -->
+        <div class="py-10 border-y border-[var(--border)] overflow-hidden bg-white/[0.01]">
+            <div class="ticker-wrap">
+                <div class="flex items-center gap-16 px-8 text-xs font-mono font-bold tracking-[0.3em] text-muted/30 uppercase">
+                    <span>✦ Studio Support</span>
+                    <span>✦ Custom Bot Setup</span>
+                    <span>✦ Human Moderation</span>
+                    <span>✦ Community Architecture</span>
+                    <span>✦ Professional Retainers</span>
+                    <span>✦ Zero-AI Support</span>
+                    <span>✦ Technical Moderation</span>
+                    <span>✦ 100% Managed</span>
+                </div>
+                <div class="flex items-center gap-16 px-8 text-xs font-mono font-bold tracking-[0.3em] text-muted/30 uppercase">
+                    <span>✦ Studio Support</span>
+                    <span>✦ Custom Bot Setup</span>
+                    <span>✦ Human Moderation</span>
+                    <span>✦ Community Architecture</span>
+                    <span>✦ Professional Retainers</span>
+                    <span>✦ Zero-AI Support</span>
+                    <span>✦ Technical Moderation</span>
+                    <span>✦ 100% Managed</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Field Reports: Elite-level Copy Refinement -->
+        <section id="reports" class="relative overflow-hidden bg-white/[0.005]" style="padding: var(--section-spacing) 0;">
+            <div class="px-6 md:px-24">
+                <div class="section-divider mb-12 reveal">
+                    <span class="text-[#C5613F]">§ 001</span> OPERATIONAL LOGS
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8 relative z-10">
+                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 100ms;">
+                        <div class="flex justify-between items-start mb-8">
+                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_001 // INFRASTRUCTURE</div>
+                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Tier-1 Studio</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-bright">Outsourced Ops Desk</h3>
+                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
+                            Full-scale technical migration for an unannounced studio title. Architected a zero-friction verification pipeline and structured staff hierarchies to prevent operational leak.
+                        </p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-[#262624] p-4 border border-white/5">
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">LIFECYCLE</div>
+                                <div class="text-bright font-bold text-sm">Pre-Launch</div>
+                            </div>
+                            <div class="bg-[#262624] p-4 border border-white/5">
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">EFFICIENCY</div>
+                                <div class="text-bright font-bold text-sm">+85% Admin</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 200ms;">
+                        <div class="flex justify-between items-start mb-8">
+                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_002 // CUSTOM LOGIC</div>
+                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Web3 Integration</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-bright">Private API Orchestration</h3>
+                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
+                            Developed proprietary cross-platform syncing for a high-volume creator brand. Secure OAuth2 portal linking Discord roles to real-world merchandise purchases.
+                        </p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-[#262624] p-4 border border-white/5">
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">LATENCY</div>
+                                <div class="text-bright font-bold text-sm">&lt;200ms</div>
+                            </div>
+                            <div class="bg-[#262624] p-4 border border-white/5">
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">STABILITY</div>
+                                <div class="text-bright font-bold text-sm">99.9% Uptime</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section id="services" class="relative border-t border-white/5" style="padding: var(--section-spacing) 0;">
+            <div class="glow bottom-0 right-[-5%] opacity-30"></div>
+            <div class="ghost-text bottom-10 left-[-2%]">build</div>
+            
+            <div class="px-6 md:px-24">
+                <div class="section-divider mb-12 reveal">
+                    <span class="text-[#C5613F]">§ 002</span> THE SERVICES
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 relative z-10">
+                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 100ms;">
+                        <div class="font-mono text-[#C5613F] text-xs mb-8 tracking-[0.2em] font-bold uppercase">01_BUILD</div>
+                        <h3 class="text-xl font-bold mb-4 text-bright">Architectural Setup</h3>
+                        <ul class="font-mono text-xs space-y-4 uppercase tracking-[0.15em] text-[#B5B3AD] font-bold">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Full Server Mapping</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Complex Permission Audits</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Frictionless Onboarding</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Staff Hierarchy Design</li>
+                        </ul>
+                    </div>
+                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 200ms;">
+                        <div class="font-mono text-[#C5613F] text-xs mb-8 tracking-[0.2em] font-bold uppercase">02_AUTOMATE</div>
+                        <h3 class="text-xl font-bold mb-4 text-bright">Custom Tooling</h3>
+                        <ul class="font-mono text-xs space-y-4 uppercase tracking-[0.15em] text-[#B5B3AD] font-bold">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Bespoke Node.js Bots</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Private API Integration</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Secure OAuth2 Flow</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Custom CRM Bridges</li>
+                        </ul>
+                    </div>
+                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 300ms;">
+                        <div class="font-mono text-[#C5613F] text-xs mb-8 tracking-[0.2em] font-bold uppercase">03_MANAGE</div>
+                        <h3 class="text-xl font-bold mb-4 text-bright">Managed Operations</h3>
+                        <ul class="font-mono text-xs space-y-4 uppercase tracking-[0.15em] text-[#B5B3AD] font-bold">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Direct Founder Access</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> 24/7 Technical Response</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Crisis Management Protocols</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Continuous Health Audits</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing: Positioning Refinement -->
+        <section id="tiers" class="relative border-t border-white/5" style="padding: var(--section-spacing) 0;">
+            <div class="px-6 md:px-24">
+                <div class="section-divider mb-12 reveal">
+                    <span class="text-[#C5613F]">§ 003</span> ENGAGEMENT MODELS
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 relative z-10">
+                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 100ms;">
+                        <div class="flex justify-between items-baseline mb-8">
+                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.15em] font-bold uppercase">MODEL_01</div>
+                            <div class="text-bright font-bold text-xl">$1.5k+</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-bright">Setup & Build</h3>
+                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
+                            A one-time architectural sprint for studios that need a world-class foundation built right the first time.
+                        </p>
+                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-3 font-bold">
+                            <div>✦ Full Visual Audit</div>
+                            <div>✦ Advanced Role Matrices</div>
+                            <div>✦ Custom Staff Guidelines</div>
+                            <div>✦ Post-Launch Stress Test</div>
+                        </div>
+                    </div>
+
+                    <div class="card p-8 md:p-10 reveal border-[#C5613F]/30" style="transition-delay: 200ms;">
+                        <div class="flex justify-between items-baseline mb-8">
+                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.15em] font-bold uppercase">MODEL_02</div>
+                            <div class="text-bright font-bold text-xl">$1.2k/mo</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-bright">Managed Ops</h3>
+                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
+                            Retained technical upkeep. We act as your external Head of Community Ops.
+                        </p>
+                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-3 font-bold">
+                            <div>✦ Direct Access to Founder</div>
+                            <div>✦ Emergency Technical Patching</div>
+                            <div>✦ Proactive Security Monitoring</div>
+                            <div>✦ Monthly Scaling Roadmap</div>
+                        </div>
+                    </div>
+
+                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 300ms;">
+                        <div class="flex justify-between items-baseline mb-8">
+                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.15em] font-bold uppercase">MODEL_03</div>
+                            <div class="text-bright font-bold text-xl">Custom</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-bright">Full Stack</h3>
+                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
+                            A complete white-label solution including private infrastructure and bespoke tooling.
+                        </p>
+                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-3 font-bold">
+                            <div>✦ Custom Bot Engineering</div>
+                            <div>✦ Managed Staff Coordination</div>
+                            <div>✦ Full Operational Ownership</div>
+                            <div>✦ 1-on-1 Consulting</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Engagement -->
+        <section id="contact" class="text-center relative overflow-hidden" style="padding: var(--section-spacing) 0;">
+            <div class="ghost-text top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-125 opacity-[0.01]">pingd</div>
+            
+            <div class="px-6 md:px-24">
+                <div class="section-divider mb-12 reveal">
+                    <span class="text-[#C5613F]">§ 004</span> ENGAGEMENT
+                </div>
+                
+                <div class="max-w-4xl mx-auto reveal pt-8">
+                    <h2 class="h-hero font-bold mb-4 leading-none text-bright">Ready to Architect?</h2>
+                    <div class="text-[#C5613F] font-mono text-xs uppercase tracking-[0.3em] font-bold mb-10">Accepting 1 New Engagement for Q2 2026</div>
+                    
+                    <p class="text-lg md:text-xl text-[#B5B3AD] mb-16 max-w-2xl mx-auto leading-relaxed font-light">
+                        Hand over the keys. We'll handle the infrastructure.
+                    </p>
+                    
+                    <div class="flex flex-col items-center gap-8">
+                        <!-- Redundancy: Added a simple email fallback link if popup script fails -->
+                        <div data-fillout-id="6437jMBACAus" data-fillout-embed-type="popup" data-fillout-button-text="SECURE SLOT" data-fillout-dynamic-resize data-fillout-button-color="#C5613F" data-fillout-button-size="large" data-fillout-inherit-parameters data-fillout-popup-size="small"></div>
+                        
+                        <a href="mailto:contact.cenOb.us@gmail.com" class="email-frame group mt-8">
+                            <span class="text-2xl md:text-4xl font-display font-bold text-bright group-hover:text-[#C5613F] transition-all duration-400">
+                                contact@pingd.media
+                            </span>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-24 max-w-2xl mx-auto text-xs font-mono tracking-[0.15em] opacity-40 uppercase leading-relaxed font-bold">
+                        pingd.media is an independent community architectural agency. We are not affiliated with, endorsed by, or sponsored by Microsoft, Roblox Corp, or Discord Inc.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="bg-[#21211F] z-50 relative border-t border-white/5" style="padding: 4rem 0;">
+            <div class="px-6 md:px-24">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-10">
+                    <div class="flex flex-col gap-3">
+                        <div class="text-xl font-bold font-display text-bright">pingd<span class="text-[#C5613F]">.</span>media</div>
+                        <div class="text-xs font-mono opacity-40 uppercase tracking-[0.2em] font-bold">Architectural Group &copy; 2025</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-10">
+                        <div class="flex flex-col gap-3">
+                            <span class="font-mono text-xs uppercase tracking-widest text-muted font-bold">Navigation</span>
+                            <a href="#reports" class="text-xs hover:text-[#C5613F] transition-colors font-bold">Field Reports</a>
+                            <a href="#services" class="text-xs hover:text-[#C5613F] transition-colors font-bold">The Services</a>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <span class="font-mono text-xs uppercase tracking-widest text-muted font-bold">Social</span>
+                            <a href="#" class="text-xs hover:text-[#C5613F] transition-colors font-bold">X.com</a>
+                            <a href="#" class="text-xs hover:text-[#C5613F] transition-colors font-bold">Discord</a>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <span class="font-mono text-xs uppercase tracking-widest text-muted font-bold">Origin</span>
+                            <span class="text-xs opacity-40 uppercase font-bold">HQ // OHIO, USA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://server.fillout.com/embed/v1/"></script>
+    <script>
+        const words = ["handled.", "managed.", "human-led.", "connected.", "the foundation."];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typeTarget = document.getElementById('typewriter');
+        
+        function type() {
+            const currentWord = words[wordIndex];
+            if (isDeleting) {
+                typeTarget.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typeTarget.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            let delta = isDeleting ? 40 : 110;
+            if (!isDeleting && charIndex === currentWord.length) {
+                isDeleting = true;
+                delta = 3200; 
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                delta = 500;
+            }
+            setTimeout(type, delta);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        const mobileMenu = document.getElementById('mobile-menu');
+        const openBtn = document.getElementById('mobileMenuBtn');
+        const closeBtn = document.getElementById('closeMenu');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('open');
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+        }
+
+        openBtn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            nav.classList.toggle('nav-blur', window.scrollY > 40);
+        });
+
+        window.onload = () => {
+            type();
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        };
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) window.scrollTo({ top: target.offsetTop - 70, behavior: 'smooth' });
+                if (mobileMenu.classList.contains('open')) toggleMenu();
+            });
+        });
+    </script>
+</body>
+</html>
