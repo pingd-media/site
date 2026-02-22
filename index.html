@@ -15,7 +15,6 @@
             --accent: #C5613F;
             --text-bright: #EEECEA;
             --text-main: #D6D4CC;
-            /* Contrast improvement for readability (old: #A19F94) */
             --text-muted: #B5B3AD; 
             --border: rgba(194, 192, 180, 0.15);
             --section-spacing: clamp(3.5rem, 8vw, 8rem);
@@ -74,10 +73,6 @@
             z-index: 1;
         }
 
-        /* PERFORMANCE OPTIMIZATION: 
-           Replaced .gif grain with CSS noise animation. 
-           Significantly lighter on CPU/Battery.
-        */
         .grain-overlay {
             position: fixed;
             inset: -150%;
@@ -216,7 +211,6 @@
             background: var(--border);
         }
 
-        /* Fillout Button Styling Override */
         [data-fillout-id] button {
             font-family: 'JetBrains Mono', monospace !important;
             text-transform: uppercase !important;
@@ -295,7 +289,6 @@
 
         <!-- Navigation -->
         <nav id="navbar" class="fixed w-full z-[100] px-6 py-5 flex justify-between items-center transition-all duration-500">
-            <!-- Brand Mark Refinement: Bolder presence -->
             <div class="text-2xl font-black tracking-tighter font-display text-bright">
                 pingd<span class="text-[#C5613F]">.</span>media
             </div>
@@ -325,7 +318,7 @@
                 </div>
                 
                 <h1 class="h-hero font-bold leading-[0.98] mb-10 reveal" style="transition-delay: 200ms;">
-                    Your community is <br>
+                    Community is <br>
                     <span id="typewriter" class="text-[#C5613F]"></span><span class="cursor"></span>
                 </h1>
                 
@@ -381,7 +374,7 @@
             </div>
         </div>
 
-        <!-- Field Reports: Elite-level Copy Refinement -->
+        <!-- Field Reports: Resume-Based Updates -->
         <section id="reports" class="relative overflow-hidden bg-white/[0.005]" style="padding: var(--section-spacing) 0;">
             <div class="px-6 md:px-24">
                 <div class="section-divider mb-12 reveal">
@@ -389,44 +382,60 @@
                 </div>
 
                 <div class="grid lg:grid-cols-2 gap-8 relative z-10">
+                    <!-- Microsoft / Minecraft Log -->
                     <div class="card p-8 md:p-10 reveal" style="transition-delay: 100ms;">
                         <div class="flex justify-between items-start mb-8">
-                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_001 // INFRASTRUCTURE</div>
-                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Tier-1 Studio</div>
+                            <div class="flex items-center gap-3">
+                                <div class="text-[#C5613F]">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M1 1h10v10H1V1zm12 0h10v10H13V1zM1 13h10v10H1V13zm12 0h10v10H13V13z"/>
+                                    </svg>
+                                </div>
+                                <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_001 // MARKETPLACE</div>
+                            </div>
+                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Microsoft Corp.</div>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 text-bright">Outsourced Ops Desk</h3>
+                        <h3 class="text-2xl font-bold mb-4 text-bright">Minecraft Asset Architecture</h3>
                         <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
-                            Full-scale technical migration for an unannounced studio title. Architected a zero-friction verification pipeline and structured staff hierarchies to prevent operational leak.
+                            Designed and shipped five high-performance mini-games for the global marketplace. Translated complex player requirements into engaging technical gameplay loops, maintaining a 95% on-time delivery rate.
                         </p>
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-[#262624] p-4 border border-white/5">
-                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">LIFECYCLE</div>
-                                <div class="text-bright font-bold text-sm">Pre-Launch</div>
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">REVENUE</div>
+                                <div class="text-bright font-bold text-sm">$13,213 Generated</div>
                             </div>
                             <div class="bg-[#262624] p-4 border border-white/5">
-                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">EFFICIENCY</div>
-                                <div class="text-bright font-bold text-sm">+85% Admin</div>
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">QUALITY</div>
+                                <div class="text-bright font-bold text-sm">+12% Above Expectation</div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Roblox / FiveM Automation Log -->
                     <div class="card p-8 md:p-10 reveal" style="transition-delay: 200ms;">
                         <div class="flex justify-between items-start mb-8">
-                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_002 // CUSTOM LOGIC</div>
-                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Web3 Integration</div>
+                            <div class="flex items-center gap-3">
+                                <div class="text-[#C5613F]">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M18.5,1.5L22.5,18.5L5.5,22.5L1.5,5.5L18.5,1.5ZM13,11H11V13H13V11Z"/>
+                                    </svg>
+                                </div>
+                                <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_002 // AUTOMATION</div>
+                            </div>
+                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Technical Scripting</div>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 text-bright">Private API Orchestration</h3>
+                        <h3 class="text-2xl font-bold mb-4 text-bright">Bespoke Utility Orchestration</h3>
                         <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
-                            Developed proprietary cross-platform syncing for a high-volume creator brand. Secure OAuth2 portal linking Discord roles to real-world merchandise purchases.
+                            Architected custom LUA and JavaScript suites to automate recurring community and gameplay tasks. Built high-volume frameworks that optimized player experience and reduced operational friction.
                         </p>
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-[#262624] p-4 border border-white/5">
-                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">LATENCY</div>
-                                <div class="text-bright font-bold text-sm">&lt;200ms</div>
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">MANUAL_REDUCTION</div>
+                                <div class="text-bright font-bold text-sm">32% Efficiency Gain</div>
                             </div>
                             <div class="bg-[#262624] p-4 border border-white/5">
-                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">STABILITY</div>
-                                <div class="text-bright font-bold text-sm">99.9% Uptime</div>
+                                <div class="text-xs font-mono text-muted mb-1.5 uppercase">TECH_STACK</div>
+                                <div class="text-bright font-bold text-sm">LUA / JS Frameworks</div>
                             </div>
                         </div>
                     </div>
@@ -559,7 +568,6 @@
                     </p>
                     
                     <div class="flex flex-col items-center gap-8">
-                        <!-- Redundancy: Added a simple email fallback link if popup script fails -->
                         <div data-fillout-id="6437jMBACAus" data-fillout-embed-type="popup" data-fillout-button-text="SECURE SLOT" data-fillout-dynamic-resize data-fillout-button-color="#C5613F" data-fillout-button-size="large" data-fillout-inherit-parameters data-fillout-popup-size="small"></div>
                         
                         <a href="mailto:contact.cenOb.us@gmail.com" class="email-frame group mt-8">
