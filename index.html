@@ -17,7 +17,7 @@
             --text-main: #D6D4CC;
             --text-muted: #B5B3AD; 
             --border: rgba(194, 192, 180, 0.15);
-            --section-spacing: clamp(3.5rem, 8vw, 8rem);
+            --section-spacing: clamp(4.5rem, 10vw, 10rem);
         }
 
         /* Prevent Safari Overflow Jiggle */
@@ -83,6 +83,7 @@
             z-index: 9999;
             animation: grain-motion 8s steps(10) infinite;
         }
+        
         @keyframes grain-motion {
             0%, 100% { transform: translate(0, 0); }
             10% { transform: translate(-5%, -5%); }
@@ -106,11 +107,6 @@
             animation: ticker 45s linear infinite;
         }
 
-        @media (max-width: 768px) {
-            .ticker-wrap { animation-duration: 25s; }
-            .menu-link { font-size: clamp(1.8rem, 10vw, 2.5rem); }
-        }
-
         .cursor {
             display: inline-block;
             width: 2px;
@@ -124,24 +120,45 @@
 
         .reveal {
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
+        /* REFINED CARD STYLING */
         .card {
-            background-color: var(--bg-surface);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: linear-gradient(180deg, rgba(48, 48, 46, 0.6) 0%, rgba(38, 38, 36, 0.2) 100%);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
             border: 1px solid var(--border);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         .card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(197, 97, 63, 0.4);
-            box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5);
+            transform: translateY(-8px);
+            border-color: rgba(194, 192, 180, 0.3);
+            box-shadow: 0 20px 40px -20px rgba(0,0,0,0.4);
             z-index: 10;
+        }
+        .card:hover::before { opacity: 1; }
+
+        /* FEATURED PRICING CARD */
+        .card-featured {
+            background: linear-gradient(180deg, rgba(197, 97, 63, 0.08) 0%, rgba(38, 38, 36, 0.4) 100%);
+            border: 1px solid rgba(197, 97, 63, 0.4);
+        }
+        .card-featured:hover {
+            border-color: rgba(197, 97, 63, 0.7);
+            box-shadow: 0 20px 40px -20px rgba(197, 97, 63, 0.2);
         }
 
         .nav-blur {
@@ -280,10 +297,10 @@
                 </svg>
             </button>
             <div class="flex flex-col items-center space-y-12 text-center">
-                <a href="#reports" class="menu-link font-display font-bold">Reports</a>
-                <a href="#services" class="menu-link font-display font-bold">Services</a>
-                <a href="#tiers" class="menu-link font-display font-bold">Pricing</a>
-                <a href="#contact" class="menu-link font-display font-bold bg-[#C5613F] text-white px-8 py-2">Secure Slot</a>
+                <a href="#reports" class="menu-link font-display text-3xl font-bold">Reports</a>
+                <a href="#services" class="menu-link font-display text-3xl font-bold">Services</a>
+                <a href="#tiers" class="menu-link font-display text-3xl font-bold">Pricing</a>
+                <a href="#contact" class="menu-link font-display text-3xl font-bold bg-[#C5613F] text-white px-8 py-2">Secure Slot</a>
             </div>
         </div>
 
@@ -308,8 +325,8 @@
             <div class="glow top-20 left-[-10%]"></div>
             <div class="ghost-text top-10 right-[-2%]">ops</div>
             
-            <div class="coord top-32 left-8">LAT: 32.1132° N</div>
-            <div class="coord top-32 right-8">LONG: 21.8932° W</div>
+            <div class="coord top-32 left-8 hidden md:block">LAT: 32.1132° N</div>
+            <div class="coord top-32 right-8 hidden md:block">LONG: 21.8932° W</div>
             
             <div class="max-w-6xl z-10">
                 <div class="reveal inline-flex items-center gap-3 mb-8 bg-[#C5613F]/10 border border-[#C5613F]/30 px-4 py-2">
@@ -318,7 +335,7 @@
                 </div>
                 
                 <h1 class="h-hero font-bold leading-[0.98] mb-10 reveal" style="transition-delay: 200ms;">
-                    Community is <br>
+                    Your community is <br>
                     <span id="typewriter" class="text-[#C5613F]"></span><span class="cursor"></span>
                 </h1>
                 
@@ -374,7 +391,7 @@
             </div>
         </div>
 
-        <!-- Field Reports: Resume-Based Updates -->
+        <!-- Field Reports: Kept as Cards, but improved CSS -->
         <section id="reports" class="relative overflow-hidden bg-white/[0.005]" style="padding: var(--section-spacing) 0;">
             <div class="px-6 md:px-24">
                 <div class="section-divider mb-12 reveal">
@@ -393,18 +410,18 @@
                                 </div>
                                 <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_001 // MARKETPLACE</div>
                             </div>
-                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Microsoft Corp.</div>
+                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted hidden sm:block">Microsoft Corp.</div>
                         </div>
                         <h3 class="text-2xl font-bold mb-4 text-bright">Minecraft Asset Architecture</h3>
                         <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
                             Designed and shipped five high-performance mini-games for the global marketplace. Translated complex player requirements into engaging technical gameplay loops, maintaining a 95% on-time delivery rate.
                         </p>
                         <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-[#262624] p-4 border border-white/5">
+                            <div class="bg-[#262624]/80 p-4 border border-white/5">
                                 <div class="text-xs font-mono text-muted mb-1.5 uppercase">REVENUE</div>
                                 <div class="text-bright font-bold text-sm">$13,213 Generated</div>
                             </div>
-                            <div class="bg-[#262624] p-4 border border-white/5">
+                            <div class="bg-[#262624]/80 p-4 border border-white/5">
                                 <div class="text-xs font-mono text-muted mb-1.5 uppercase">QUALITY</div>
                                 <div class="text-bright font-bold text-sm">+12% Above Expectation</div>
                             </div>
@@ -422,18 +439,18 @@
                                 </div>
                                 <div class="font-mono text-[#C5613F] text-xs tracking-[0.2em] font-bold uppercase">LOG_002 // AUTOMATION</div>
                             </div>
-                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted">Technical Scripting</div>
+                            <div class="bg-white/5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted hidden sm:block">Technical Scripting</div>
                         </div>
                         <h3 class="text-2xl font-bold mb-4 text-bright">Bespoke Utility Orchestration</h3>
                         <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
                             Architected custom LUA and JavaScript suites to automate recurring community and gameplay tasks. Built high-volume frameworks that optimized player experience and reduced operational friction.
                         </p>
                         <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-[#262624] p-4 border border-white/5">
+                            <div class="bg-[#262624]/80 p-4 border border-white/5">
                                 <div class="text-xs font-mono text-muted mb-1.5 uppercase">MANUAL_REDUCTION</div>
                                 <div class="text-bright font-bold text-sm">32% Efficiency Gain</div>
                             </div>
-                            <div class="bg-[#262624] p-4 border border-white/5">
+                            <div class="bg-[#262624]/80 p-4 border border-white/5">
                                 <div class="text-xs font-mono text-muted mb-1.5 uppercase">TECH_STACK</div>
                                 <div class="text-bright font-bold text-sm">LUA / JS Frameworks</div>
                             </div>
@@ -443,69 +460,94 @@
             </div>
         </section>
 
-        <!-- Services -->
+        <!-- Services: Redesigned to break the "Box" fatigue -->
         <section id="services" class="relative border-t border-white/5" style="padding: var(--section-spacing) 0;">
             <div class="glow bottom-0 right-[-5%] opacity-30"></div>
             <div class="ghost-text bottom-10 left-[-2%]">build</div>
             
             <div class="px-6 md:px-24">
-                <div class="section-divider mb-12 reveal">
+                <div class="section-divider mb-16 reveal">
                     <span class="text-[#C5613F]">§ 002</span> THE SERVICES
                 </div>
 
-                <div class="grid md:grid-cols-3 gap-6 relative z-10">
-                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 100ms;">
-                        <div class="font-mono text-[#C5613F] text-xs mb-8 tracking-[0.2em] font-bold uppercase">01_BUILD</div>
-                        <h3 class="text-xl font-bold mb-4 text-bright">Architectural Setup</h3>
-                        <ul class="font-mono text-xs space-y-4 uppercase tracking-[0.15em] text-[#B5B3AD] font-bold">
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Full Server Mapping</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Complex Permission Audits</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Frictionless Onboarding</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Staff Hierarchy Design</li>
-                        </ul>
+                <!-- Changed from a Grid of Cards to a Staggered List format -->
+                <div class="flex flex-col relative z-10">
+                    
+                    <!-- Item 01 -->
+                    <div class="group flex flex-col md:flex-row gap-6 md:gap-24 items-start py-12 border-b border-white/5 reveal">
+                        <div class="font-display text-[#C5613F] text-6xl md:text-8xl font-black leading-none opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                            01
+                        </div>
+                        <div class="flex-1 max-w-2xl mt-2">
+                            <h3 class="text-3xl font-bold mb-4 text-bright font-display tracking-tight group-hover:text-[#C5613F] transition-colors duration-300">Architectural Setup</h3>
+                            <p class="text-[#B5B3AD] mb-8 leading-relaxed text-lg">We lay the concrete before building the house. Comprehensive structural planning to ensure your server scales without breaking.</p>
+                            <ul class="grid sm:grid-cols-2 gap-4 font-mono text-xs uppercase tracking-[0.15em] text-[#D6D4CC] font-bold">
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Full Server Mapping</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Complex Permission Audits</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Frictionless Onboarding</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Staff Hierarchy Design</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 200ms;">
-                        <div class="font-mono text-[#C5613F] text-xs mb-8 tracking-[0.2em] font-bold uppercase">02_AUTOMATE</div>
-                        <h3 class="text-xl font-bold mb-4 text-bright">Custom Tooling</h3>
-                        <ul class="font-mono text-xs space-y-4 uppercase tracking-[0.15em] text-[#B5B3AD] font-bold">
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Bespoke Node.js Bots</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Private API Integration</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Secure OAuth2 Flow</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Custom CRM Bridges</li>
-                        </ul>
+
+                    <!-- Item 02 -->
+                    <div class="group flex flex-col md:flex-row gap-6 md:gap-24 items-start py-12 border-b border-white/5 reveal">
+                        <div class="font-display text-[#C5613F] text-6xl md:text-8xl font-black leading-none opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                            02
+                        </div>
+                        <div class="flex-1 max-w-2xl mt-2">
+                            <h3 class="text-3xl font-bold mb-4 text-bright font-display tracking-tight group-hover:text-[#C5613F] transition-colors duration-300">Custom Tooling</h3>
+                            <p class="text-[#B5B3AD] mb-8 leading-relaxed text-lg">Off-the-shelf bots ruin premium experiences. We code proprietary scripts and bridges specific to your studio's operational needs.</p>
+                            <ul class="grid sm:grid-cols-2 gap-4 font-mono text-xs uppercase tracking-[0.15em] text-[#D6D4CC] font-bold">
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Bespoke Node.js Bots</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Private API Integration</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Secure OAuth2 Flow</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Custom CRM Bridges</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 300ms;">
-                        <div class="font-mono text-[#C5613F] text-xs mb-8 tracking-[0.2em] font-bold uppercase">03_MANAGE</div>
-                        <h3 class="text-xl font-bold mb-4 text-bright">Managed Operations</h3>
-                        <ul class="font-mono text-xs space-y-4 uppercase tracking-[0.15em] text-[#B5B3AD] font-bold">
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Direct Founder Access</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> 24/7 Technical Response</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Crisis Management Protocols</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-[#C5613F]"></span> Continuous Health Audits</li>
-                        </ul>
+
+                    <!-- Item 03 -->
+                    <div class="group flex flex-col md:flex-row gap-6 md:gap-24 items-start py-12 reveal">
+                        <div class="font-display text-[#C5613F] text-6xl md:text-8xl font-black leading-none opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                            03
+                        </div>
+                        <div class="flex-1 max-w-2xl mt-2">
+                            <h3 class="text-3xl font-bold mb-4 text-bright font-display tracking-tight group-hover:text-[#C5613F] transition-colors duration-300">Managed Operations</h3>
+                            <p class="text-[#B5B3AD] mb-8 leading-relaxed text-lg">We don't just build it and leave. We remain on retainer to act as your external Head of Community Ops, handling crises and scale.</p>
+                            <ul class="grid sm:grid-cols-2 gap-4 font-mono text-xs uppercase tracking-[0.15em] text-[#D6D4CC] font-bold">
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Direct Founder Access</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> 24/7 Technical Response</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Crisis Management Protocols</li>
+                                <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-white/20 group-hover:bg-[#C5613F] transition-colors"></span> Continuous Health Audits</li>
+                            </ul>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- Pricing: Positioning Refinement -->
+        <!-- Pricing: Redesigned to highlight the core offering -->
         <section id="tiers" class="relative border-t border-white/5" style="padding: var(--section-spacing) 0;">
             <div class="px-6 md:px-24">
-                <div class="section-divider mb-12 reveal">
+                <div class="section-divider mb-16 reveal">
                     <span class="text-[#C5613F]">§ 003</span> ENGAGEMENT MODELS
                 </div>
 
-                <div class="grid md:grid-cols-3 gap-6 relative z-10">
-                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 100ms;">
+                <div class="grid lg:grid-cols-3 gap-6 relative z-10 items-center">
+                    
+                    <!-- Tier 1: Minimalist -->
+                    <div class="p-8 md:p-10 reveal border border-white/10 bg-transparent hover:border-white/30 transition-colors duration-300" style="transition-delay: 100ms;">
                         <div class="flex justify-between items-baseline mb-8">
-                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.15em] font-bold uppercase">MODEL_01</div>
-                            <div class="text-bright font-bold text-xl">$1.5k+</div>
+                            <div class="font-mono text-muted text-xs tracking-[0.15em] font-bold uppercase">MODEL_01</div>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 text-bright">Setup & Build</h3>
-                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
+                        <h3 class="text-2xl font-bold mb-2 text-bright">Setup & Build</h3>
+                        <div class="text-bright font-mono text-xl mb-6">$1.5k+</div>
+                        <p class="text-sm text-[#B5B3AD] mb-8 leading-relaxed">
                             A one-time architectural sprint for studios that need a world-class foundation built right the first time.
                         </p>
-                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-3 font-bold">
+                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-4 font-bold">
                             <div>✦ Full Visual Audit</div>
                             <div>✦ Advanced Role Matrices</div>
                             <div>✦ Custom Staff Guidelines</div>
@@ -513,39 +555,45 @@
                         </div>
                     </div>
 
-                    <div class="card p-8 md:p-10 reveal border-[#C5613F]/30" style="transition-delay: 200ms;">
-                        <div class="flex justify-between items-baseline mb-8">
-                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.15em] font-bold uppercase">MODEL_02</div>
-                            <div class="text-bright font-bold text-xl">$1.2k/mo</div>
+                    <!-- Tier 2: FEATURED (Stands out completely from the others) -->
+                    <div class="card card-featured p-8 md:p-10 reveal lg:-translate-y-4 shadow-2xl z-20" style="transition-delay: 200ms;">
+                        <div class="inline-block bg-[#C5613F] text-white text-[10px] font-mono px-3 py-1 uppercase tracking-widest font-bold mb-6">Recommended</div>
+                        <div class="flex justify-between items-baseline mb-4">
+                            <h3 class="text-3xl font-display font-bold text-bright">Managed Ops</h3>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 text-bright">Managed Ops</h3>
-                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
-                            Retained technical upkeep. We act as your external Head of Community Ops.
+                        <div class="text-[#C5613F] font-mono text-2xl font-bold mb-6">$1.2k <span class="text-sm text-muted font-normal">/mo</span></div>
+                        <p class="text-base text-white/90 mb-8 leading-relaxed">
+                            Retained technical upkeep. We act as your external Head of Community Ops to ensure frictionless scaling.
                         </p>
-                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-3 font-bold">
-                            <div>✦ Direct Access to Founder</div>
-                            <div>✦ Emergency Technical Patching</div>
-                            <div>✦ Proactive Security Monitoring</div>
-                            <div>✦ Monthly Scaling Roadmap</div>
+                        <div class="pt-6 border-t border-white/10 text-xs font-mono text-white/70 uppercase tracking-wider space-y-4 font-bold">
+                            <div class="flex gap-3"><span class="text-[#C5613F]">✓</span> Direct Access to Founder</div>
+                            <div class="flex gap-3"><span class="text-[#C5613F]">✓</span> Emergency Technical Patching</div>
+                            <div class="flex gap-3"><span class="text-[#C5613F]">✓</span> Proactive Security Monitoring</div>
+                            <div class="flex gap-3"><span class="text-[#C5613F]">✓</span> Monthly Scaling Roadmap</div>
                         </div>
+                        <a href="#contact" class="block w-full text-center mt-10 bg-[#C5613F] text-white py-4 font-mono text-xs uppercase tracking-widest font-bold hover:bg-white hover:text-[#262624] transition-colors">
+                            Apply for Retainer
+                        </a>
                     </div>
 
-                    <div class="card p-8 md:p-10 reveal" style="transition-delay: 300ms;">
+                    <!-- Tier 3: Minimalist -->
+                    <div class="p-8 md:p-10 reveal border border-white/10 bg-transparent hover:border-white/30 transition-colors duration-300" style="transition-delay: 300ms;">
                         <div class="flex justify-between items-baseline mb-8">
-                            <div class="font-mono text-[#C5613F] text-xs tracking-[0.15em] font-bold uppercase">MODEL_03</div>
-                            <div class="text-bright font-bold text-xl">Custom</div>
+                            <div class="font-mono text-muted text-xs tracking-[0.15em] font-bold uppercase">MODEL_03</div>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 text-bright">Full Stack</h3>
-                        <p class="text-base text-[#B5B3AD] mb-8 leading-relaxed">
-                            A complete white-label solution including private infrastructure and bespoke tooling.
+                        <h3 class="text-2xl font-bold mb-2 text-bright">Full Stack</h3>
+                        <div class="text-bright font-mono text-xl mb-6">Custom Pricing</div>
+                        <p class="text-sm text-[#B5B3AD] mb-8 leading-relaxed">
+                            A complete white-label solution including private infrastructure and bespoke tooling built from scratch.
                         </p>
-                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-3 font-bold">
+                        <div class="pt-6 border-t border-white/5 text-xs font-mono text-muted uppercase tracking-wider space-y-4 font-bold">
                             <div>✦ Custom Bot Engineering</div>
                             <div>✦ Managed Staff Coordination</div>
                             <div>✦ Full Operational Ownership</div>
                             <div>✦ 1-on-1 Consulting</div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
@@ -567,7 +615,7 @@
                         Hand over the keys. We'll handle the infrastructure.
                     </p>
                     
-                    <div class="flex flex-col items-center gap-8">
+                    <div class="flex flex-col items-center gap-8 z-20 relative">
                         <div data-fillout-id="6437jMBACAus" data-fillout-embed-type="popup" data-fillout-button-text="SECURE SLOT" data-fillout-dynamic-resize data-fillout-button-color="#C5613F" data-fillout-button-size="large" data-fillout-inherit-parameters data-fillout-popup-size="small"></div>
                         
                         <a href="mailto:contact.cenOb.us@gmail.com" class="email-frame group mt-8">
